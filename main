@@ -1,0 +1,252 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+test=pd.read_csv("/content/test.csv")
+
+train=pd.read_csv("/content/train.csv")
+
+train
+
+pd.set_option('display.max_rows',None)
+
+train.isnull().sum()
+
+def preprocess(df):
+  df.drop('Id',axis=1,inplace=True)
+  df['LotFrontage'].fillna(df['LotFrontage'].median(), inplace=True)
+  df['Alley'].fillna('None',inplace=True)
+  df['MasVnrType'].fillna('None',inplace=True)
+  df['Electrical'].fillna(method='ffill', inplace=True)
+  df['MasVnrArea'].fillna(0,inplace=True)
+  for i in ['BsmtQual','BsmtCond','BsmtExposure','BsmtFinType1','BsmtFinType2','PoolQC','Fence','MiscFeature']:
+    df[i].fillna("None",inplace=True)
+  df['FireplaceQu'].fillna('None', inplace=True)
+  df['GarageType'].fillna('None', inplace=True)
+  df['GarageFinish'].fillna('None', inplace=True)
+  df['GarageYrBlt'].fillna(0, inplace=True)
+  df['GarageQual'].fillna('None', inplace=True)
+  df['GarageCond'].fillna('None', inplace=True)
+
+
+preprocess(train)
+
+train.isnull().sum()
+
+train.info()
+
+test
+
+test.isnull().sum()
+
+def preprocess(df):
+  df.drop('Id',axis=1,inplace=True)
+  df['LotFrontage'].fillna(df['LotFrontage'].median(), inplace=True)
+  df['Alley'].fillna('None',inplace=True)
+  df['MasVnrType'].fillna('None',inplace=True)
+  df['Electrical'].fillna(method='ffill', inplace=True)
+  df['MasVnrArea'].fillna(0,inplace=True)
+  for i in ['BsmtQual','BsmtCond','BsmtExposure','BsmtFinType1','BsmtFinType2','PoolQC','Fence','MiscFeature']:
+    df[i].fillna("None",inplace=True)
+  df['FireplaceQu'].fillna('None', inplace=True)
+  df['GarageType'].fillna('None', inplace=True)
+  df['GarageFinish'].fillna('None', inplace=True)
+  df['GarageYrBlt'].fillna(0, inplace=True)
+  df['GarageQual'].fillna('None', inplace=True)
+  df['GarageCond'].fillna('None', inplace=True)
+
+preprocess(test)
+
+test.isnull().sum()
+
+test['Utilities'].fillna(test['Utilities'].mode()[0], inplace=True)
+bsmt_cols = [
+    'BsmtFinSF1','BsmtFinSF2','BsmtUnfSF',
+    'TotalBsmtSF','BsmtFullBath','BsmtHalfBath'
+]
+for col in bsmt_cols:
+    test[col].fillna(0, inplace=True)
+test['KitchenQual'].fillna(test['KitchenQual'].mode()[0], inplace=True)
+test['Functional'].fillna('Typ', inplace=True)
+garage_num_cols = ['GarageCars','GarageArea']
+for col in garage_num_cols:
+    test[col].fillna(0, inplace=True)
+test['SaleType'].fillna(test['SaleType'].mode()[0], inplace=True)
+
+cat_mode_cols=['MSZoning','Exterior1st','Exterior2nd']
+for col in cat_mode_cols:
+    test[col].fillna(test[col].mode()[0], inplace=True)
+
+
+train.isnull().sum()
+
+test.isnull().sum()
+
+train.info()
+
+plt.scatter(train['GrLivArea'], train['SalePrice'])
+
+sns.boxplot(train['GrLivArea'])
+
+
+sns.boxplot(train['SalePrice'])
+
+train = train.drop(train[(train['GrLivArea'] > 4000) &
+                         (train['SalePrice'] < 300000)].index)
+
+train
+
+def categorical_column_preprocessing(df):
+    for col in df.select_dtypes(include='object').columns:
+        df[col] = df[col].str.lower().str.strip()
+    return df
+
+categorical_column_preprocessing(train)
+
+categorical_column_preprocessing(test)
+
+train['SalePrice'] = np.log1p(train['SalePrice'])
+
+numerical_cols = train.select_dtypes(include=['int64','float64']).columns
+skewed = train[numerical_cols].apply(lambda x: x.skew())
+skewed_cols = skewed[skewed > 0.75].index
+for col in skewed_cols:
+    train[col] = np.log1p(train[col])
+    test[col] = np.log1p(test[col])
+
+
+train['TotalBath'] = (
+    train['FullBath'] +
+    0.5 * train['HalfBath'] +
+    train['BsmtFullBath'] +
+    0.5 * train['BsmtHalfBath']
+)
+
+train['TotalSF'] = (
+    train['TotalBsmtSF'] +
+    train['1stFlrSF'] +
+    train['2ndFlrSF']
+)
+
+
+quality_map = {
+    'ex':5, 'gd':4, 'ta':3, 'fa':2, 'po':1, 'none':0
+}
+
+test['ExterQual'] = test['ExterQual'].map(quality_map)
+train['ExterQual'] = train['ExterQual'].map(quality_map)
+
+**MODEL BUILDING**
+
+train
+
+train.shape
+
+test.shape
+
+y_train=train['SalePrice']
+
+test
+
+test.shape
+
+train.shape
+
+y_train=train['SalePrice']
+
+numerical_cols = test.select_dtypes(include=['int64','float64']).columns
+
+test['TotalBath'] = (
+    test['FullBath'] +
+    0.5 * test['HalfBath'] +
+    test['BsmtFullBath'] +
+    0.5 * test['BsmtHalfBath']
+)
+
+test['TotalSF'] = (
+    test['TotalBsmtSF'] +
+    test['1stFlrSF'] +
+    test['2ndFlrSF']
+)
+
+train.shape
+
+test.shape
+
+x_train=train.drop('SalePrice',axis=1)
+
+x_train.shape
+
+test.shape
+
+y_train
+
+x_train.info()
+
+test.info()
+
+cat_cols = x_train.select_dtypes(include='object').columns
+num_cols = x_train.select_dtypes(exclude='object').columns
+
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+
+ct = ColumnTransformer(
+    transformers=[
+        ('cat', OneHotEncoder(handle_unknown='ignore'), cat_cols),
+        ('num', 'passthrough', num_cols)
+    ]
+)
+
+x_train = ct.fit_transform(x_train)
+test  = ct.transform(test)
+
+cols = ct.get_feature_names_out()
+if hasattr(x_train, "toarray"):
+    x_train = pd.DataFrame(x_train.toarray(), columns=cols)
+else:
+    x_train = pd.DataFrame(x_train, columns=cols)
+
+# Convert test
+if hasattr(test, "toarray"):   # if sparse matrix
+    test = pd.DataFrame(test.toarray(), columns=cols)
+else:
+    test = pd.DataFrame(test, columns=cols)
+
+from sklearn.ensemble import RandomForestRegressor
+model = RandomForestRegressor()
+model.fit(x_train, y_train)
+
+y_pred= model.predict(test)
+
+sub=pd.read_csv("/content/sample_submission.csv")
+
+submission = pd.DataFrame({
+    'Id': sub['Id'],
+    'SalePrice': np.expm1(y_pred)
+})
+submission.to_csv('submission_random_forest.csv', index=False)
+
+from sklearn.ensemble import GradientBoostingRegressor
+model=GradientBoostingRegressor()
+model.fit(x_train, y_train)
+y_pred= model.predict(test)
+submission = pd.DataFrame({
+    'Id': sub['Id'],
+    'SalePrice': np.expm1(y_pred)
+})
+submission.to_csv('submission_gradient_boosting.csv', index=False)
+
+from xgboost import XGBRegressor
+model = XGBRegressor()
+model.fit(x_train, y_train)
+y_pred = model.predict(test)
+submission = pd.DataFrame({
+    'Id': sub['Id'],
+    'SalePrice': np.expm1(y_pred)
+})
+submission.to_csv('submission_xgboost.csv', index=False)
+
+
+
